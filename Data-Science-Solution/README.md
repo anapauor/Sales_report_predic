@@ -3,7 +3,9 @@ This is a program for sales report generator-
 ## Content info 
 
 'Sales_Data' folder contains the input monthly data to be process
+
 'Output' folder contains the results obtained
+
 'Test' folder contains the tests performed to the processing program 
 
 ## Background Processing Information:
