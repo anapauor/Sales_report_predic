@@ -12,6 +12,7 @@ files_test = [file for file in os.listdir(path_test) if not file.startswith('.')
 Report1 = SalesReport(files=files_test, path=path_test)
 new_name_file = 'all_data_sales'
 op_path = '/home/ana/Documentos/Proyectos/Sales/Data-Science-Solution/Output'
+df = (pd.read_csv(os.path.join(op_path, new_name_file + '.csv'))).reset_index(drop=True)
 
 
 # -------------------------------> TEST <---------------------------------------------------------------
@@ -25,19 +26,12 @@ class TestSalesReport(unittest.TestCase):
         self.assertEqual(Report1.path, path_test)
     
     def test_join_monthly_data(self):
-        report = (Report1.join_monthly_data(new_name_file, op_path)).reset_index(drop=True)
-        df = (pd.read_csv(os.path.join(op_path, new_name_file + '.csv'))).reset_index(drop=True)
-        assert_frame_equal(report.reset_index(drop=True), df.reset_index(drop=True))
+        jointed = (Report1.join_monthly_data(new_name_file, op_path)).reset_index(drop=True)
+        assert_frame_equal(jointed.reset_index(drop=True), df.reset_index(drop=True))
 
-
-# all_months_data = pd.DataFrame()
-
-# # for file in files:
-# #     current_data = pd.read_csv(path+"/"+file)
-# #     all_months_data = pd.concat([all_months_data, current_data])
-    
-# all_months_data.to_csv("all_data_copy.csv", index=False)
-
+    def test_clean_empty_val(self):
+        cleaned = Report1.clean_empty_val(df)
+        self.assertEqual(cleaned.isnull().values.any(), False)
 
 # ----------------------------------------------
 if __name__ == '__main__':

@@ -7,6 +7,8 @@ This is a program for sales report generator-
 'Output' folder contains the results obtained
 'Test' folder contains the tests performed to the processing program 
 
+Some formulas taken from https://python-programming.quantecon.org/python_oop.html
+
 ## Background Processing Information:
 
 Start by cleaning our data, including:
