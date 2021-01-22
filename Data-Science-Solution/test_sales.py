@@ -44,6 +44,7 @@ class TestAllMonthData(unittest.TestCase):
         self.assertFalse((df.clean_empty_val()).isnull().values.any())
     
     def test_set_month_column(self):
+        
         self.assertTrue('Month' in (df.set_month_column()))
 
 

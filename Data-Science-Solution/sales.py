@@ -1,18 +1,35 @@
 #usefull modeules
 import pandas as pd
 import os
+from jinja2 import FileSystemLoader, Environment
+
 
 # Sale resport class for report generation from files 
 
+env = Environment(
+    loader=FileSystemLoader(searchpath="templates")
+)
+template = env.get_template("report.html")
+
+content = "Hello, world!"
+
+def main():
+    """
+    Entry point for the script.
+    Render a template and write it to file.
+    :return:
+    """
+    with open("Output/report.html", "w") as f:
+        f.write(template.render(content=content)) # links the template wiht the code
+
 
 """  
-## Programm for creating reports from arranged sales data
+## Programm for creating reports from monthly sales data
 
 FileData cls -> loaded csv files containing monthly sales
     get_joined_data mtd: return a single file with charged period sales 
 
 SalesReport cls -> Period Reports
-
 
 """
 
@@ -39,15 +56,17 @@ class AllMonthData():
     def __init__(self, all_months_data):
         self.all_months_data = pd.DataFrame(all_months_data)
 
-
-    def clean_empty_val(self): 
-        'Pre-processing data'
-        
+    def get_clean_empty_val(self): 
+        "Pre-processing data, eliminate NaN values and return cleaned DataFrame"
         self.all_months_data = self.all_months_data.dropna(how='all') # Find and remove NAN
         return self.all_months_data
 
     def set_month_column(self):
+        "Set the month number in a new column 'Month', return updated DataFrane"
+        self.all_months_data.rename(columns={'Order Date': 'Order_Date'})
         self.all_months_data['Month'] = pd.to_datetime(self.all_months_data['Order Date']).dt.month # Add a month column
+
+
 
 
     # def get_address(self):
@@ -61,5 +80,6 @@ class AllMonthData():
 
 
 
-__name__ == '__main__'
+if __name__ == '__main__':
+    main()
 
