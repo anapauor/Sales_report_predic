@@ -1,4 +1,4 @@
-This is a program for sales report generator- 
+This is a program for sales report generation- 
 
 ## Content info 
 
