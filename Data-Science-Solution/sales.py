@@ -4,25 +4,6 @@ import os
 from jinja2 import FileSystemLoader, Environment
 
 
-# Sale resport class for report generation from files 
-
-env = Environment(
-    loader=FileSystemLoader(searchpath="templates")
-)
-template = env.get_template("report.html")
-
-content = "Hello, world!"
-
-def main():
-    """
-    Entry point for the script.
-    Render a template and write it to file.
-    :return:
-    """
-    with open("Output/report.html", "w") as f:
-        f.write(template.render(content=content)) # links the template wiht the code
-
-
 """  
 ## Programm for creating reports from monthly sales data
 
@@ -33,28 +14,15 @@ SalesReport cls -> Period Reports
 
 """
 
-class FileData():
-    """ 
-    File prep
-    """ 
-    def __init__(self, files, path):
-        self.files = files # name of the input files
-        self.path = path # name of the input path
-        self.all_months_data = pd.DataFrame()
-        
-    def get_joined_monthly_data(self): 
-        "Joints the monthly sales data in a single file named in 'new_file_name' located in the 'op_path'"  
-        for file in self.files:
-            current_data = pd.read_csv(self.path+"/"+file)
-            self.all_months_data = pd.concat([self.all_months_data, current_data])
-        return self.all_months_data
+class ReportResult():
+    """
+    Class to store the results of reports from sales data.
+    """
 
-    # def save_joined_monthly_data(self, new_file_name, op_path):
-    #     self.all_months_data.to_csv((os.path.join(op_path, new_file_name+ '.csv')), index=False)
-
-class AllMonthData():
-    def __init__(self, all_months_data):
-        self.all_months_data = pd.DataFrame(all_months_data)
+    def __init__(self, path, files):
+        self.path = path
+        self.files = files
+        self.all_months_data = get_joined_monthly_data(path, files)
 
     def get_clean_empty_val(self): 
         "Pre-processing data, eliminate NaN values and return cleaned DataFrame"
@@ -66,18 +34,68 @@ class AllMonthData():
         self.all_months_data.rename(columns={'Order Date': 'Order_Date'})
         self.all_months_data['Month'] = pd.to_datetime(self.all_months_data['Order Date']).dt.month # Add a month column
 
+    def get_df_as_html(self):
+        """
+        Return the results DataFrame as an HTML object.
+        :return: String of HTML.
+        """
+        html = self.all_months_data.to_html()
+        return html
 
 
 
-    # def get_address(self):
-    #     def get_city(address): # Func to extract the city adress
-    #         return address.split(",")[1].strip(" ")
-    #     def get_state(address): # Func to extract the state adress
-    #         return address.split(",")[2].split(" ")[1]
-    #     #  Create colum for city (state) applying get_city and get_state
-    #     self.all_months_data['City'] = self.all_months_data['Purchase Address'].apply(lambda x: f"{get_city(x)}  ({get_state(x)})")
-    #     return self.all_months_data
+def get_joined_monthly_data(path, files): 
+    """
+    Join monthly sales data in .csv format and put them into single df
+    :param path: Path to de monthly data files
+    :files: list of files with monthly data
+    """  
+    for file in files:
+        current_data = pd.read_csv(path+"/"+file)
+        df_all_months = pd.DataFrame()
+        df_all_months = pd.concat([df_all_months, current_data])
+    return df_all_months   
 
+def csv_to_html(filepath):
+    """
+    Open a .csv file and return it in HTML format.
+    :param filepath: Filepath to a .csv file to be read.
+    :return: String of HTML to be published.
+    """
+    df = pd.read_csv(filepath, index_col=0)
+    html = df.to_html()
+    return html
+
+# Configure Jinja and ready the loader
+env = Environment(
+    loader=FileSystemLoader(searchpath="templates")
+)
+
+# Assemble the templates I'll use
+base_template = env.get_template("report.html")
+table_section_template = env.get_template("table_section.html")
+
+
+def main():
+    """
+    Entry point for the script.
+    Render a template and write it to file.
+    :return:
+    """
+
+    # Content to be published (code that I only want executed when explicitly run the script)
+    title = "Model Report"
+    sections = list()
+    sections.append(table_section_template.render(
+        model="FirstTry",
+        dataset="all_data_copy.csv",
+        table=csv_to_html("Output/all_data_sales.csv")
+    ))
+    with open("Output/report.html", "w") as f:
+        f.write(base_template.render(
+            title=title,
+            sections=sections
+        ))
 
 
 if __name__ == '__main__':
