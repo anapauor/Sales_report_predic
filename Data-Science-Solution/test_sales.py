@@ -1,6 +1,6 @@
 # usefull modules
-from sales import FileData
-from sales import AllMonthData
+from sales import ReportResult
+from sales import csv_to_df, get_joined_monthly_data
 
 import pandas as pd
 from pandas._testing import assert_frame_equal
