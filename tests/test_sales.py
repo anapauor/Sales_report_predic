@@ -9,7 +9,7 @@ import os
 
 # Set Up samples
 
-path_test = "/home/ana/Documentos/Proyectos/Sales/Data-Science-Solution/SalesAnalysis/Sales_Data"
+path_test = "/home/ana/Documentos/Proyectos/Sales/data"
 files_test = [file for file in os.listdir(path_test) if not file.startswith('.')] # Ignore hidden files
 
 file_report = FileData(files=files_test, path=path_test)
