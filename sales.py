@@ -63,7 +63,7 @@ def csv_to_html(filepath):
     :return: String of HTML to be published.
     """
     df = pd.read_csv(filepath, index_col=0)
-    html = df.to_html()
+    html = df.to_html(classes=["table"])
     return html
 
 # Configure Jinja and ready the loader
@@ -89,7 +89,7 @@ def main():
     sections.append(table_section_template.render(
         model="FirstTry",
         dataset="all_data_copy.csv",
-        table=csv_to_html("Output/all_data_sales.csv")
+        table=csv_to_html("all_data.csv")
     ))
     with open("Output/report.html", "w") as f:
         f.write(base_template.render(
